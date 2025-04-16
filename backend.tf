@@ -1,9 +1,8 @@
-# terraform {
-#   backend "s3" {
-#     bucket         = "my-terraform-state-bucket-123456"
-#     key            = "openproject/terraform.tfstate"
-#     region         = "us-east-1"
-#     dynamodb_table = "terraform-locks"
-#     encrypt        = true
-#   }
-# }
+terraform {
+  backend "s3" {
+    bucket         = "my-aws-bucket-3550"
+    key            = "goutham/terraform.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+  }
+}

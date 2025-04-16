@@ -1,34 +1,31 @@
 provider "aws" {
-  region = "us-east-1"
+  region = "us-west-2"
 }
 
 module "vpc" {
   source = "./modules/vpc"
 }
 
-module "security" {
-  source = "./modules/security"
-  vpc_id = module.vpc.vpc_id
+module "security_group" {
+  source  = "./modules/security_group"
+  vpc_id  = module.vpc.vpc_id
 }
 
 module "ec2" {
-  source        = "./modules/ec2"
-  vpc_id        = module.vpc.vpc_id
-  subnet_id     = module.vpc.public_subnet_ids[0]
-  key_name      = var.key_name
-  instance_type = var.instance_type
-  alb_sg_id     = module.security.alb_sg_id
+  source              = "./modules/ec2"
+  subnet_id           = module.vpc.subnet_ids[0]
+  security_group_id   = module.security_group.web_security_group_id
+  key_name            = var.key_name
+  ami_id              = var.ami_id
+  instance_type       = var.instance_type
 }
 
+
 module "alb" {
-  source              = "./modules/alb"
-  alb_name            = "openproject-alb"
-  vpc_id              = module.vpc.vpc_id
-  subnets             = module.vpc.public_subnet_ids
-  security_group_ids  = [module.security.alb_sg_id]
-  target_group_name   = "openproject-tg"
-  ec2_instance_id     = module.ec2.instance_id
-  listener_port       = 80
-  target_port         = 8080
+  source             = "./modules/alb"
+  vpc_id             = module.vpc.vpc_id
+  subnet_ids         = module.vpc.subnet_ids
+  alb_security_group_id = module.security_group.lb_security_group_id
+  instance_id        = module.ec2.instance_id
 }
 
