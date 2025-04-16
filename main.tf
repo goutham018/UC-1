@@ -13,6 +13,7 @@ module "security_group" {
 
 module "ec2" {
   source              = "./modules/ec2"
+  vpc_id             = module.vpc.vpc_id
   subnet_id           = module.vpc.subnet_ids[0]
   security_group_id   = module.security_group.web_security_group_id
   key_name            = var.key_name
